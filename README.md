@@ -52,6 +52,8 @@ First TECH_SEMINAR at Woori FISA
 
 - 이 예제에서 my_tokenizer는 표준 Tokenizer를 사용하고, my_analyzer는 my_tokenizer를 사용하여 토큰을 분리한 후, **소문자 변환(lowercase)과 불용어 제거(stop) 필터**를 적용합니다.
 
+#### [Link to ELK](ELK.md)
+
 ### 2. LangChain 🐦‍⛓️
 - LangChain을 통해 Open AI, ElasticSearch 및 다양한 기술을 한 곳에서 활용
 - **LangChain**: 다양한 기술을 연결하여 활용할 수 있는 플랫폼
@@ -59,3 +61,6 @@ First TECH_SEMINAR at Woori FISA
   - **ElasticSearch**: 실시간 분산 검색 및 분석 엔진
   - **기타 기술**: 다양한 기술을 통합하여 활용 가능
 - LLM을 활용한 다양한 앱을 손쉽게 만들 수 있는 프레임워크
+
+#### [Link to LangChain](LangChain.md)
+
