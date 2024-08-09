@@ -64,3 +64,40 @@ First TECH_SEMINAR at Woori FISA
 
 #### [Link to LangChain](LangChain.md)
 
+## Why RAG? 🔥
+
+- RAG: Retrieval Augmented Generation
+  - **Retrieval**: 검색을 통해 정보를 가져오는 과정
+  - **Augmented**: 보강된, 확장된
+  - **Generation**: 생성, 발생
+
+- Fine-tuning을 통한 성능 향상
+  - **Fine-tuning**: 사전 학습된 모델을 특정 데이터에 맞게 재학습하는 과정
+  - **성능 향상**: 특정 데이터에 대한 이해도가 높아지고, 정확도가 향상됨
+
+RAG의 경우에는 모델자체를 변경하지 않고, 필요한 데이터를 검색하여 활용함으로써 성능을 향상시킬 수 있습니다.
+반면에 Fine-tuning의 경우에는 모델을 변경하여 성능을 향상시키는 방식입니다. (가중치, 파라미터 등 모델에서 변경 가능한 수치를 조정)
+
+---
+
+# Reference 
+
+- RAG 개요 
+  - [Understanding retrieval augmented generation (RAG) | Elastic Snackable Series](https://youtu.be/OS4ZefUPAks)
+
+- 사용방식 of RAG with ElasticSearch and langchain
+  - [Building LLM applications with LangChain: ElasticON AI](https://youtu.be/V05ieC9o0jQ)
+
+- 샘플코드 및 설명 (코랩)
+  - [RAG with OpenAI and Langchain - part 1 - Elastic Daily Bytes S05E12](https://www.youtube.com/live/XgXtSdNFM6s)
+
+- ELK 측 공식문서 about RAG
+  - [What is retrieval augmented generation](https://www.elastic.co/kr/what-is/retrieval-augmented-generation)
+
+- 벡터 DB가 필요한 이유
+  - [Superb_AI Vector Store](https://blog-ko.superb-ai.com/vector-store/)
+
+- 백터가 대체 뭔가? (딥러닝개요)
+  - [Neural networks Series - 3Blue1Brown](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+
+
