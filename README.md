@@ -18,6 +18,9 @@ First TECH_SEMINAR at Woori FISA
   - *특징) 모델의 웨이트에 독립된 웨이트를 추가하여 효율적인 학습을 가능하게 함.*
 
 ### 1. ElasticSearch 🔍
+
+> You Know, for Search
+
 - ElasticSearch: 실시간 **분산 검색** 및 **분석 엔진**
   - **Apache Lucene** 기반 (분산 검색 엔진)
   - RESTful API 지원
@@ -26,8 +29,6 @@ First TECH_SEMINAR at Woori FISA
   - **Tokenizer, Analyzer, Token Filter** 등 다양한 분석기능 제공
   - 데이터를 색인하고 검색하는 기능 제공 (ElasticSearch)
   - 데이터를 분석하고 시각화하는 기능 제공 (Kibana)
-
-> You Know, for Search
 
 - **Tokenizer와 Analyzer**
   - **Tokenizer**: 문장을 단어로 분리하는 역할
