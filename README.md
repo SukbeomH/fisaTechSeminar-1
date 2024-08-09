@@ -3,6 +3,20 @@ First TECH_SEMINAR at Woori FISA
 
 ## RAG 구성을 위한 ElasticSearch 활용 및 ELK 소개
 
+### 0. RAG: Retrieval Augmented Generation 🚀
+
+**RAG (Retrieval-Augmented Generation)**
+- 모델이 **학습하지 않은 문서**들을 **벡터화**하여 데이터베이스에 저장하고, 유저의 **입력 벡터와 유사도를 판별**하여 관련된 K개의 데이터를 검색합니다. 
+- 모델은 이 **데이터를 참고**하여 출력 결과를 생성합니다. 
+- *특징) 모델 자체를 변경하지 않음.*
+
+**Fine-tuning**
+- 모델의 일부 레이어(주로 출력에 가까운 레이어)를 고정하지 않고, 새로운 데이터를 사용하여 모델의 웨이트를 조정하는 기법입니다. 
+- *특징) 모델의 웨이트를 업데이트하여 성능을 향상시킴.*
+- **LoRa (Low-Rank Adaptation)** :: Fine-tuning의 하위 개념
+  - 모델의 기존 파라미터를 전부 조정하지 않고, 새로운 저차원 랭크 레이어(A와 B)를 추가하여 이들만 학습시키는 기법입니다. 
+  - *특징) 모델의 웨이트에 독립된 웨이트를 추가하여 효율적인 학습을 가능하게 함.*
+
 ### 1. ElasticSearch 🔍
 - ElasticSearch: 실시간 **분산 검색** 및 **분석 엔진**
   - **Apache Lucene** 기반 (분산 검색 엔진)
@@ -52,7 +66,7 @@ First TECH_SEMINAR at Woori FISA
 
 - 이 예제에서 my_tokenizer는 표준 Tokenizer를 사용하고, my_analyzer는 my_tokenizer를 사용하여 토큰을 분리한 후, **소문자 변환(lowercase)과 불용어 제거(stop) 필터**를 적용합니다.
 
-#### [Link to ELK](ELK.md)
+#### [Link to ELK](Research/ELK.md)
 
 ### 2. LangChain 🐦‍⛓️
 - LangChain을 통해 Open AI, ElasticSearch 및 다양한 기술을 한 곳에서 활용
@@ -62,7 +76,7 @@ First TECH_SEMINAR at Woori FISA
   - **기타 기술**: 다양한 기술을 통합하여 활용 가능
 - LLM을 활용한 다양한 앱을 손쉽게 만들 수 있는 프레임워크
 
-#### [Link to LangChain](LangChain.md)
+#### [Link to LangChain](Research/LangChain.md)
 
 ## Why RAG? 🔥
 
@@ -78,6 +92,38 @@ First TECH_SEMINAR at Woori FISA
 RAG의 경우에는 모델자체를 변경하지 않고, 필요한 데이터를 검색하여 활용함으로써 성능을 향상시킬 수 있습니다.
 반면에 Fine-tuning의 경우에는 모델을 변경하여 성능을 향상시키는 방식입니다. (가중치, 파라미터 등 모델에서 변경 가능한 수치를 조정)
 
+### Prompt-tuning 🎨 for RAG
+
+RAG는 AI를 통해 도출한 결과의 정확도를 높이고, 동시에 환각과 같은 문제를 억제하기 위한 방법입니다.
+
+- 내부 데이터로 모델을 학습시키는 것이 아닌, **외부 데이터를 검색**하여 활용
+  - **외부 데이터**: 검색을 통해 가져온 데이터
+  - **내부 데이터**: 모델이 학습한 데이터
+- 외부 데이터를 레퍼런스로 활용하기 때문에 모델을 조정할 때, 모델 자체를 Fine-tuning 하지 않고 그 외 요소를 조정하는 것이 효율적입니다.
+  - **Fine-tuning**: 모델의 가중치, 파라미터 등을 조정하여 성능을 향상시키는 방식
+  - 특정 데이터에 종속된 모델을 만들지 않고, **범용적인 모델**을 활용할 수 있습니다.
+- **Prompt-tuning**: 프롬프트를 튜닝하여 모델의 성능을 향상시키는 방식
+  - **프롬프트**: 모델에 입력되는 문장의 형태를 결정하는 요소
+  - 프롬프트를 튜닝하여 모델이 원하는 결과를 도출하도록 유도할 수 있습니다.
+- 범용 모델을 그대로 사용하면서도 프롬프트를 조정하여 **특정 데이터에 맞게 활용**할 수 있습니다.
+
+### Prompt-tuning의 장점
+
+- **범용 모델 활용**: 특정 데이터에 종속되지 않고, 범용적인 모델을 활용할 수 있습니다.
+- **프롬프트 조정**: 프롬프트를 튜닝하여 모델의 성능을 향상시킬 수 있습니다.
+- **데이터 종속성 감소**: 외부 데이터를 활용하기 때문에 내부 데이터에 종속되지 않습니다.
+
+### Prompt-tuning의 단점
+
+- **프롬프트 튜닝의 어려움**: 프롬프트를 튜닝하는 것이 어려울 수 있습니다.
+- **모델의 이해도**: 모델의 이해도가 높아야 프롬프트를 효율적으로 튜닝할 수 있습니다.
+- **시간과 비용**: 프롬프트 튜닝에 시간과 비용이 소요될 수 있습니다.
+- **모호성**: 프롬프트의 모호성으로 인해 원하는 결과를 도출하기 어려울 수 있습니다.
+
+### 정량적인 평가와 효율적인 프롬프트 튜닝
+
+[Prompt-tuning](Research/Prompt-tuning.md)
+
 ---
 
 # Reference 
@@ -90,6 +136,7 @@ RAG의 경우에는 모델자체를 변경하지 않고, 필요한 데이터를 
 
 - 샘플코드 및 설명 (코랩)
   - [RAG with OpenAI and Langchain - part 1 - Elastic Daily Bytes S05E12](https://www.youtube.com/live/XgXtSdNFM6s)
+  - [langchain-elasticsearch-RAG Github](https://github.com/ashishtiwari1993/langchain-elasticsearch-RAG)
 
 - ELK 측 공식문서 about RAG
   - [What is retrieval augmented generation](https://www.elastic.co/kr/what-is/retrieval-augmented-generation)
@@ -100,4 +147,8 @@ RAG의 경우에는 모델자체를 변경하지 않고, 필요한 데이터를 
 - 백터가 대체 뭔가? (딥러닝개요)
   - [Neural networks Series - 3Blue1Brown](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
 
-
+- DSPy와 TextGrad
+  - [DSPy](https://github.com/stanfordnlp/dspy)
+  - [TextGrad](https://github.com/zou-group/textgrad)
+  - [TextGrad vs DSPy](https://medium.com/@jelkhoury880/textgrad-vs-dspy-revolutionizing-ai-system-optimization-through-automatic-text-based-58f8ee776447)
+  - [2406.07496 TextGrad](https://arxiv.org/pdf/2406.07496)
