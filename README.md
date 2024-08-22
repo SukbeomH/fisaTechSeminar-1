@@ -1,155 +1,115 @@
 # 기술 세미나 1회차
-First TECH_SEMINAR at Woori FISA 
+
+First TECH_SEMINAR at Woori FISA
 
 ## RAG 구성을 위한 ElasticSearch 활용 및 ELK 소개
 
-### 0. RAG: Retrieval Augmented Generation 🚀
+- **ElasticSearch**: 실시간 분산 검색 및 분석 엔진
 
-**RAG (Retrieval-Augmented Generation)**
-- 모델이 **학습하지 않은 문서**들을 **벡터화**하여 데이터베이스에 저장하고, 유저의 **입력 벡터와 유사도를 판별**하여 관련된 K개의 데이터를 검색합니다. 
-- 모델은 이 **데이터를 참고**하여 출력 결과를 생성합니다. 
-- *특징) 모델 자체를 변경하지 않음.*
+  - **분산형 구조**를 통해 대량의 데이터를 실시간으로 검색하고 분석할 수 있습니다.
+  - **RESTful API**를 지원하여 다양한 언어로 쉽게 접근할 수 있습니다.
+  - **검색 엔진**으로 사용되는 것이 주 목적이지만, **데이터 분석**에도 활용됩니다.
+  - **Vector**와 **Similarity**를 활용하여 **유사도 검색**이 가능합니다.
 
-**Fine-tuning**
-- 모델의 일부 레이어(주로 출력에 가까운 레이어)를 고정하지 않고, 새로운 데이터를 사용하여 모델의 웨이트를 조정하는 기법입니다. 
-- *특징) 모델의 웨이트를 업데이트하여 성능을 향상시킴.*
-- **LoRa (Low-Rank Adaptation)** :: Fine-tuning의 하위 개념
-  - 모델의 기존 파라미터를 전부 조정하지 않고, 새로운 저차원 랭크 레이어(A와 B)를 추가하여 이들만 학습시키는 기법입니다. 
-  - *특징) 모델의 웨이트에 독립된 웨이트를 추가하여 효율적인 학습을 가능하게 함.*
+- **ELK**: ElasticSearch, Logstash, Kibana의 약자
 
-### 1. ElasticSearch 🔍
-
-> You Know, for Search
-
-- ElasticSearch: 실시간 **분산 검색** 및 **분석 엔진**
-  - **Apache Lucene** 기반 (분산 검색 엔진)
-  - RESTful API 지원
-  - 데이터를 JSON 문서로 저장
-  - 벡터 검색, 텍스트 검색, 구조화된 데이터 검색 등 다양한 검색 기능 제공
-  - **Tokenizer, Analyzer, Token Filter** 등 다양한 분석기능 제공
-  - 데이터를 색인하고 검색하는 기능 제공 (ElasticSearch)
-  - 데이터를 분석하고 시각화하는 기능 제공 (Kibana)
+  - **Logstash**: 다양한 소스에서 데이터를 수집하고 변환하여 ElasticSearch로 전송하는 서비스
+  - **Kibana**: ElasticSearch에서 수집된 데이터를 시각화하고 관리하는 서비스
 
 - **Tokenizer와 Analyzer**
+
   - **Tokenizer**: 문장을 단어로 분리하는 역할
   - **Analyzer**: 토큰화된 단어를 분석하는 역할
 
-**Tokenizer**
-- 역할: Tokenizer는 텍스트를 개별 토큰(단어)으로 분리하는 역할을 합니다.
-- 작동 방식: 입력된 텍스트를 특정 기준(예: 공백, 구두점 등)에 따라 분리하여 토큰의 리스트를 생성합니다.
-- 예시: "ElasticSearch is powerful"라는 문장이 주어지면, Tokenizer는 이를 ["ElasticSearch", "is", "powerful"]로 분리합니다.
-
-**Analyzer**
-- 역할: Analyzer는 Tokenizer와 여러 Token Filter를 조합하여 텍스트를 분석하고 처리하는 역할을 합니다.
-- 작동 방식: Analyzer는 먼저 Tokenizer를 사용하여 텍스트를 토큰으로 분리한 후, 추가적인 처리를 위해 여러 Token Filter를 적용합니다. 이 과정에서 토큰의 형태를 변경하거나 불필요한 토큰을 제거할 수 있습니다.
-- 예시: "ElasticSearch is powerful"라는 문장이 주어지면, Analyzer는 이를 ["elasticsearch", "powerful"]로 변환할 수 있습니다. 여기서 "is"는 불용어로 제거되고, 나머지 단어는 소문자로 변환되었습니다.
-
-```json
-{
-  "settings": {
-    "analysis": {
-      "tokenizer": {
-        "my_tokenizer": {
-          "type": "standard"
-        }
-      },
-      "analyzer": {
-        "my_analyzer": {
-          "type": "custom",
-          "tokenizer": "my_tokenizer",
-          "filter": ["lowercase", "stop"]
-        }
-      }
-    }
-  }
-}
-```
-
-- 이 예제에서 my_tokenizer는 표준 Tokenizer를 사용하고, my_analyzer는 my_tokenizer를 사용하여 토큰을 분리한 후, **소문자 변환(lowercase)과 불용어 제거(stop) 필터**를 적용합니다.
-
-#### [Link to ELK](Research/ELK.md)
-
-### 2. LangChain 🐦‍⛓️
-- LangChain을 통해 Open AI, ElasticSearch 및 다양한 기술을 한 곳에서 활용
-- **LangChain**: 다양한 기술을 연결하여 활용할 수 있는 플랫폼
-  - **Open AI**: GPT-3, Codex 등 다양한 인공지능 기술 제공
-  - **ElasticSearch**: 실시간 분산 검색 및 분석 엔진
-  - **기타 기술**: 다양한 기술을 통합하여 활용 가능
-- LLM을 활용한 다양한 앱을 손쉽게 만들 수 있는 프레임워크
-
-#### [Link to LangChain](Research/LangChain.md)
-
-## Why RAG? 🔥
-
-- RAG: Retrieval Augmented Generation
+- **RAG**: Retrieval Augmented Generation
   - **Retrieval**: 검색을 통해 정보를 가져오는 과정
   - **Augmented**: 보강된, 확장된
   - **Generation**: 생성, 발생
 
-- Fine-tuning을 통한 성능 향상
-  - **Fine-tuning**: 사전 학습된 모델을 특정 데이터에 맞게 재학습하는 과정
-  - **성능 향상**: 특정 데이터에 대한 이해도가 높아지고, 정확도가 향상됨
+# LLM의 등장과 한계
 
-RAG의 경우에는 모델자체를 변경하지 않고, 필요한 데이터를 검색하여 활용함으로써 성능을 향상시킬 수 있습니다.
-반면에 Fine-tuning의 경우에는 모델을 변경하여 성능을 향상시키는 방식입니다. (가중치, 파라미터 등 모델에서 변경 가능한 수치를 조정)
+**할루시네이션**은 단순히 사실이 아닌 내용을 만들어내는 문제를 넘어, LLM이 **데이터의 최신성**이나 **출처의 투명성** 확보와 같은 *'정보 검색 방식의 질적 전환'*에 필수적인 기능을 갖추지 못하고 있다는 것을 의미합니다.
 
-### Prompt-tuning 🎨 for RAG
+### 한계를 극복하기 위한 방법
 
-RAG는 AI를 통해 도출한 결과의 정확도를 높이고, 동시에 환각과 같은 문제를 억제하기 위한 방법입니다.
+- **Fine-tuning**: 사전 학습 모델(pre-trained model)에 특정 도메인(예: 의료, 법률, 금융)의 데이터를 추가 학습시켜 모델을 최적화하는 방법
 
-- 내부 데이터로 모델을 학습시키는 것이 아닌, **외부 데이터를 검색**하여 활용
-  - **외부 데이터**: 검색을 통해 가져온 데이터
-  - **내부 데이터**: 모델이 학습한 데이터
-- 외부 데이터를 레퍼런스로 활용하기 때문에 모델을 조정할 때, 모델 자체를 Fine-tuning 하지 않고 그 외 요소를 조정하는 것이 효율적입니다.
-  - **Fine-tuning**: 모델의 가중치, 파라미터 등을 조정하여 성능을 향상시키는 방식
-  - 특정 데이터에 종속된 모델을 만들지 않고, **범용적인 모델**을 활용할 수 있습니다.
-- **Prompt-tuning**: 프롬프트를 튜닝하여 모델의 성능을 향상시키는 방식
-  - **프롬프트**: 모델에 입력되는 문장의 형태를 결정하는 요소
-  - 프롬프트를 튜닝하여 모델이 원하는 결과를 도출하도록 유도할 수 있습니다.
-- 범용 모델을 그대로 사용하면서도 프롬프트를 조정하여 **특정 데이터에 맞게 활용**할 수 있습니다.
+  - 시간과 비용이 많이 소요되고, 모델의 범용성이 저하
 
-### Prompt-tuning의 장점
+- **Prompt-tuning**: 모델의 입력 문장 형태를 결정하는 요소인 프롬프트(prompt)를 튜닝하여 모델의 성능을 향상시키는 방법
 
-- **범용 모델 활용**: 특정 데이터에 종속되지 않고, 범용적인 모델을 활용할 수 있습니다.
-- **프롬프트 조정**: 프롬프트를 튜닝하여 모델의 성능을 향상시킬 수 있습니다.
-- **데이터 종속성 감소**: 외부 데이터를 활용하기 때문에 내부 데이터에 종속되지 않습니다.
+  - 프롬프트 튜닝에 시간과 비용이 소요되지만, 모델의 범용성을 유지
+  - **범용 모델**을 그대로 사용하면서도 프롬프트를 조정하여 **특정 데이터에 맞게 활용**할 수 있습니다.
+  - 좋은 프롬프트를 찾는 것이 모호성으로 인해 어려울 수 있습니다.
 
-### Prompt-tuning의 단점
+- **RAG**: 검색을 통해 정보를 가져오는 과정을 통해 모델의 성능을 향상시키는 방법
+  - **외부 지식 소스**와 연계하여 모델의 범용성과 적응력을 유지하면서도 정확하고 신뢰할 수 있는 답변을 생성
+  - Fine tuning에 비해 시간과 비용이 적게 소요됩니다.
+  - 외부 데이터베이스를 활용하기 때문에 _별도의 학습 데이터를 준비할 필요가 없습니다._
+    - 모델의 **일반성을 유지**할 수 있습니다.
+    - 특정 도메인에 국한되지 않고 다양한 분야에 대한 질문에 답변할 수 있습니다.
+    - 모델 자체의 편향이나 오류를 줄일 수 있습니다.
+  - 답변의 **근거를 제시**할 수 있습니다.
+    - 답변과 함께 정보 출처를 제공하여 답변의 신뢰도를 높일 수 있습니다.
+  - 할루시네이션 가능성을 줄일 수 있습니다.
 
-- **프롬프트 튜닝의 어려움**: 프롬프트를 튜닝하는 것이 어려울 수 있습니다.
-- **모델의 이해도**: 모델의 이해도가 높아야 프롬프트를 효율적으로 튜닝할 수 있습니다.
-- **시간과 비용**: 프롬프트 튜닝에 시간과 비용이 소요될 수 있습니다.
-- **모호성**: 프롬프트의 모호성으로 인해 원하는 결과를 도출하기 어려울 수 있습니다.
+### RAG 구성 && 작동 과정
 
-### 정량적인 평가와 효율적인 프롬프트 튜닝
+1. **데이터 임베딩 및 벡터 DB 구축**
 
-[Prompt-tuning](Research/Prompt-tuning.md)
+- RAG의 첫 번째 단계는 **자체 데이터를 임베딩 모델에 통합**하는 것입니다.
+  - 텍스트 데이터를 벡터 형식으로 변환하여 벡터 DB를 구축합니다.
+  - 이렇게 벡터화된 정보가 풍부한 데이터베이스는 Retriever(문서 검색기) 부분에서 사용자의 쿼리와 관련된 정보를 찾는 데 활용됩니다.
 
----
+2. **쿼리 벡터화 및 관련 정보 추출 (증강 단계)**
 
-# Reference 
+- 사용자의 **질문(쿼리)을 벡터화**합니다.
+- 벡터 DB를 대상으로 다양한 검색 기법을 사용하여 소스 정보에서 가장 관련성이 높은 부분 또는 상위 K개의 항목을 추출합니다.
+- 추출된 관련 정보는 쿼리 텍스트와 함께 LLM에 제공됩니다.
 
-- RAG 개요 
-  - [Understanding retrieval augmented generation (RAG) | Elastic Snackable Series](https://youtu.be/OS4ZefUPAks)
+3. **LLM을 통한 답변 생성**
 
-- 사용방식 of RAG with ElasticSearch and langchain
-  - [Building LLM applications with LangChain: ElasticON AI](https://youtu.be/V05ieC9o0jQ)
+- LLM은 쿼리 텍스트와 추출된 관련 정보를 바탕으로 최종 답변을 생성합니다.
+- 이 과정에서 정확한 출처에 기반한 답변이 가능해집니다.
 
-- 샘플코드 및 설명 (코랩)
-  - [RAG with OpenAI and Langchain - part 1 - Elastic Daily Bytes S05E12](https://www.youtube.com/live/XgXtSdNFM6s)
-  - [langchain-elasticsearch-RAG Github](https://github.com/ashishtiwari1993/langchain-elasticsearch-RAG)
+### RAG를 활용할 때 어려운 점
 
-- ELK 측 공식문서 about RAG
-  - [What is retrieval augmented generation](https://www.elastic.co/kr/what-is/retrieval-augmented-generation)
+- **데이터 전처리**: Raw 데이터를 AI 모델에 입력할 수 있는 형태로 변환하는 과정
+- **벡터 DB 구축**: 데이터를 벡터화하여 DB를 구축하는 것
+- **쿼리 벡터화**: 사용자의 질문을 벡터화하여 검색에 활용하는 것
+- **정보 추출**: 벡터 DB에서 관련 정보를 추출하는 것
 
-- 벡터 DB가 필요한 이유
-  - [Superb_AI Vector Store](https://blog-ko.superb-ai.com/vector-store/)
+# ElasticSearch를 통한 Vector DB 활용
 
-- 백터가 대체 뭔가? (딥러닝개요)
-  - [Neural networks Series - 3Blue1Brown](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+### 색인 :: 벡터를 주어진 데이터 구조에 매핑합니다.
 
-- DSPy와 TextGrad
-  - [DSPy](https://github.com/stanfordnlp/dspy)
-  - [TextGrad](https://github.com/zou-group/textgrad)
-  - [TextGrad vs DSPy](https://medium.com/@jelkhoury880/textgrad-vs-dspy-revolutionizing-ai-system-optimization-through-automatic-text-based-58f8ee776447)
-  - [2406.07496 TextGrad](https://arxiv.org/pdf/2406.07496)
+- 해싱: **지역성 기반 해싱(Locality-Sensitive Hashing, LSH) 알고리즘**과 같은 해싱 알고리즘은 스도쿠 퍼즐과 같은 해시 테이블을 사용하여 최근접 유사 항목을 매핑합니다.
+  - 쿼리는 테이블로 해시된 다음 동일한 테이블의 벡터 집합과 비교되어 유사성을 결정합니다.
+- **양자화**: 양자화 기술은 벡터를 더 작은 부분으로 나누고 해당 부분을 코드로 표현한 다음 해당 부분을 다시 합칩니다.
+  - 쿼리가 수행되면 양자화를 사용하는 벡터 데이터베이스는 쿼리를 코드로 나눈 다음 코드북과 일치시켜 가장 유사한 코드를 찾아 결과를 생성합니다.
+- **그래프 기반**: 계층적으로 탐색 가능한 작은 세계(Hierarchical Navigable Small World, HNSW) 알고리즘과 같은 그래프 알고리즘은 노드를 사용하여 벡터를 나타냅니다.
+  - 노드를 클러스터링하고 유사한 노드 사이에 선이나 가장자리를 그려 **계층적 그래프**를 만듭니다.
+  - 쿼리가 시작되면 알고리즘은 그래프 계층 구조를 탐색하여 쿼리 벡터와 가장 유사한 벡터가 포함된 노드를 찾습니다.
+- 벡터 데이터베이스는 **데이터 객체의 메타데이터도 색인**합니다.
+  - 이러한 이유로 벡터 데이터베이스에는 벡터 인덱스와 메타데이터 인덱스라는 두 개의 인덱스가 포함됩니다.
+
+### 쿼리 :: 인덱스 벡터를 쿼리 벡터와 비교하여 최근접 벡터 항목을 결정합니다.
+
+최근접 항목을 설정하기 위해 벡터 데이터베이스는 유사성 측정이라는 수학적 방법을 사용합니다.
+
+- **코사인 유사성(Cosine similarity)**은 -1에서 1 범위의 유사성을 설정합니다.
+  - 벡터 공간에서 두 벡터 사이의 각도의 코사인을 측정하여 정반대(-1로 표시), 직교(0으로 표시) 또는 동일한(1로 표시) 벡터를 결정합니다.
+- **유클리드 거리(Euclidean distance)**는 벡터 사이의 직선 거리를 측정하여 0부터 무한대까지의 범위에서 유사성을 결정합니다.
+  - 동일한 벡터는 0으로 표시되고, 값이 클수록 벡터 간의 차이가 커집니다.
+- **점 곱(Dot product) 유사성 측정**은 마이너스 무한대에서 무한대까지의 범위에서 벡터 유사성을 결정합니다.
+  - 점 곱은 두 벡터의 크기와 그 사이의 각도의 코사인의 곱을 측정하여 서로 떨어진 벡터에는 음의 값을, 직교하는 벡터에 0을, 같은 방향을 가리키는 벡터에 양의 값을 할당합니다.
+
+### 후처리
+
+마지막 과정에서 벡터 데이터베이스는 서로 다른 유사성 척도를 조합하여 최근접 항목의 순위를 다시 매깁니다.
+
+- 이 단계에서 데이터베이스는 메타데이터를 기반으로 검색에서 식별된 쿼리의 최근접 항목을 필터링합니다.
+
+### 전처리(preprocessing) 또는 프리필터링(pre-filtering)
+
+벡터 검색을 실행하기 전에 필터를 적용하여 데이터베이스의 크기를 줄이는 것을 의미합니다.
